@@ -1,0 +1,2 @@
+class SolrCollection
+end

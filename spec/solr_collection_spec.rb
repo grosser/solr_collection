@@ -1,0 +1,3 @@
+describe SolrCollection do
+  
+end
