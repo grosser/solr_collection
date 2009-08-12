@@ -1,10 +1,14 @@
 require 'will_paginate/collection'
 
+#Proxy that delegates all calls to contained subject
+# except solr related methods in MAPPED_FIELDS
 class SolrCollection
-  def initialize(subject, options={})
+  MAPPED_FIELDS = [:facets, :spellcheck, {:total=>:total_entries}]
+
+  def initialize(solr_result, options={})
     @data = options
 
-    [:facets, :spellcheck, {:total=>:total_entries}].each do |fields|
+    MAPPED_FIELDS.each do |fields|
       if fields.is_a? Hash
         solr_field = fields.keys.first
         collection_field = fields.values.first
@@ -13,22 +17,27 @@ class SolrCollection
       end
 
       if not @data[collection_field]
-        @data[collection_field] = if subject.respond_to?(solr_field)
-          subject.send(solr_field)
+        @data[collection_field] = if solr_result.respond_to?(solr_field)
+          solr_result.send(solr_field)
         else
           nil
         end
       end
     end
 
-    subject = subject.results if subject.respond_to?(:results) #solr collection have results in an array called results
+    #solr result has results in an array called results
+    results = if solr_result.respond_to?(:results)
+      solr_result.results
+    else
+      solr_result
+    end
 
     @subject = WillPaginate::Collection.new(
       options.delete(:page) || 1,
       options.delete(:per_page) || 24,
-      options.delete(:total_entries) || subject.size
+      options.delete(:total_entries) || results.size
     )
-    @subject.replace(subject)
+    @subject.replace(results)
   end
 
   private
