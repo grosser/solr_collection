@@ -10,7 +10,7 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = project
-    gem.summary = "Arrayish wrapper for solr results, that behaves like will_paginate collection"
+    gem.summary = "Wrapper for solr results sets then behaves/feels like will_paginate collection"
     gem.email = "grosser.michael@gmail.com"
     gem.homepage = "http://github.com/grosser/#{project}"
     gem.authors = ["Michael Grosser"]

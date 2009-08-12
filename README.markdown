@@ -1,4 +1,4 @@
-SolrCollection is a wrapper for solr results sets then behaves/feels like will_paginate collection
+SolrCollection is a wrapper for acts_as_solr results sets that behaves/feels like will_paginate collection
 
  - no need to seperate results from facets / spellcheck information
  - all pages can use the same pagination helpers
