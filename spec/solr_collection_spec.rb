@@ -52,4 +52,22 @@ describe SolrCollection do
   it "does not know non-solr-method" do
     lambda{ SolrCollection.new([]).fooo }.should raise_error
   end
+
+  it "uses total from the collection" do
+    a = []
+    def a.total; 22;end
+    SolrCollection.new(a).total_entries.should == 22
+  end
+
+  it "can overwrite total of collection" do
+    a = []
+    def a.total; 22;end
+    SolrCollection.new(a, :total_entries=>33).total_entries.should == 33
+  end
+
+  it "uses results as subject" do
+    a = []
+    def a.results; [1,2,3];end
+    SolrCollection.new(a)[2].should == 3
+  end
 end
