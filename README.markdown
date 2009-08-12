@@ -10,7 +10,7 @@ Usage
  - As gem `  sudo gem install grosser-solr_collection --source http://gems.github.com  `
 
 Example:
-    options = {:limit=>10, :offset=>100}
+    options = {:limit=>10, :offset=>100, :facets=>{....}, .... }
     results = MyModel.find_by_solr("abc", options) rescue []
     results = SolrCollection.new(results, options)
 

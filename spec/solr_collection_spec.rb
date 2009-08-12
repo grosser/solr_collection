@@ -7,11 +7,6 @@ describe SolrCollection do
     s[1].should == 2
   end
 
-  it "stores additional params as methods" do
-    s = SolrCollection.new([1,2,3], :facets=>1)
-    s.facets.should == 1
-  end
-
   it "behaves like a will_paginate collection" do
     s = SolrCollection.new([1,2,3], :page=>1, :per_page=>2, :total_entries=>20)
     s.total_pages.should == 10
@@ -22,23 +17,31 @@ describe SolrCollection do
   end
 
   it "knows per_page" do
-    SolrCollection.new([1,2,3]).per_page.should == 24
+    SolrCollection.new([1,2,3]).per_page.should == 10
   end
 
   it "knows total_entries" do
     SolrCollection.new([1,2,3]).total_entries.should == 3
   end
 
-  it "can overwrite page" do
+  it "can set page" do
     SolrCollection.new([1,2,3], :page=>3).current_page.should == 3
   end
 
-  it "can overwrite per_page" do
+  it "can set per_page" do
     SolrCollection.new([1,2,3], :per_page=>3).per_page.should == 3
   end
 
-  it "can overwrite total_entries" do
-    SolrCollection.new([1,2,3], :total_entries=>33).total_entries.should == 33
+  it "uses per_page when per_page and limit are given" do
+    SolrCollection.new([1], :per_page=>2, :limit=>20, :offset=>10).current_page.should == 6
+  end
+
+  it "understands limit/offset" do
+    SolrCollection.new([1], :limit=>2, :offset=>10).current_page.should == 6
+  end
+
+  it "understands per_page/offset" do
+    SolrCollection.new([1], :per_page=>2, :offset=>2).current_page.should == 2
   end
 
   it "knows factes" do
@@ -59,15 +62,21 @@ describe SolrCollection do
     SolrCollection.new(a).total_entries.should == 22
   end
 
-  it "can overwrite total of collection" do
+  it "does not overwrite total" do
     a = []
     def a.total; 22;end
-    SolrCollection.new(a, :total_entries=>33).total_entries.should == 33
+    SolrCollection.new(a, :total_entries=>33).total_entries.should == 22
   end
 
   it "uses results as subject" do
     a = []
     def a.results; [1,2,3];end
     SolrCollection.new(a)[2].should == 3
+  end
+
+  it "does not modify options" do
+    a = {:per_page=>2, :offset=>2}
+    SolrCollection.new([1], a).current_page.should == 2
+    a.should == {:per_page=>2, :offset=>2}
   end
 end
