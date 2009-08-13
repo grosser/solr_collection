@@ -18,6 +18,10 @@ Example:
     something_else if results.total_entries > results.size #more pages ?
     will_paginate(results)
 
+Other features:
+    #facet fields can be nil or [] or {} -> use has_facet_fields? to check
+    puts results.facets['facet_fields']['categories'] if results.has_facet_fields?
+
 Author
 ======
 [Michael Grosser](http://pragmatig.wordpress.com)  

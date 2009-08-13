@@ -44,6 +44,10 @@ class SolrCollection
     @subject.replace(results)
   end
 
+  def has_facet_fields?
+    !!(facets and not facets['facet_fields'].empty?) # is an array, when empty
+  end
+
   private
 
   def fill_page_and_per_page(options)

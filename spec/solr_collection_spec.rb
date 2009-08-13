@@ -94,4 +94,22 @@ describe SolrCollection do
       SolrCollection.new(a, :total_entries=>33).total_entries.should == 22
     end
   end
+
+  describe :has_facet_fields do
+    it "is false when facets are nil" do
+      SolrCollection.new([]).has_facet_fields?.should == false
+    end
+
+    it "is false when facet_fieldss are an empty array" do
+      a = []
+      def a.facets; {'facet_fields'=>[]}; end
+      SolrCollection.new(a).has_facet_fields?.should == false
+    end
+
+    it "is true when it is a filled hash" do
+      a = []
+      def a.facets; {'facet_fields'=>{'x'=>'y'}}; end
+      SolrCollection.new(a).has_facet_fields?.should == true
+    end
+  end
 end
