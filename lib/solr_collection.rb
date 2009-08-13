@@ -31,7 +31,7 @@ class SolrCollection
         nil
       end
     end
-    @solr_data[:total_entries] ||= results.size
+    @solr_data[:total_entries] ||= options[:total_entries] || results.size
 
     #build will_paginate collection from given options
     options = fill_page_and_per_page(options)
@@ -39,7 +39,7 @@ class SolrCollection
     @subject = WillPaginate::Collection.new(
       options[:page],
       options[:per_page],
-      options[:total_entries]
+      @solr_data[:total_entries]
     )
     @subject.replace(results)
   end
