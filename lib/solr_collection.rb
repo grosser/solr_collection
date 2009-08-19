@@ -45,7 +45,8 @@ class SolrCollection
   end
 
   def has_facet_fields?
-    !!(facets and not facets['facet_fields'].empty?) # is an array, when empty
+    # can be a array, when empty reults where returned
+    !!(facets and facets['facet_fields'] and not facets['facet_fields'].empty?)
   end
 
   private
