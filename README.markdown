@@ -1,13 +1,13 @@
 SolrCollection is a wrapper for acts_as_solr results sets that behaves/feels like will_paginate collection
 
- - no need to seperate results from facets / spellcheck information
+ - no need to separate results from facets / spellcheck information
  - all pages can use the same pagination helpers
  - simple to mock an empty result when solr is down or throws errors
 
 Usage
 =====
  - As Rails plugin  `  script/plugin install git://github.com/grosser/solr_collection.git  `
- - As gem `  sudo gem install grosser-solr_collection --source http://gems.github.com  `
+ - As gem `  sudo gem install solr_collection  `
 
 Example:
     options = {:limit=>10, :offset=>100, :facets=>{....}, .... }
