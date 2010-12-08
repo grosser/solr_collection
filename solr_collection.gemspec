@@ -5,18 +5,17 @@
 
 Gem::Specification.new do |s|
   s.name = %q{solr_collection}
-  s.version = "0.1.2"
+  s.version = "0.1.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Michael Grosser"]
-  s.date = %q{2009-11-22}
+  s.date = %q{2010-12-08}
   s.email = %q{grosser.michael@gmail.com}
-  s.extra_rdoc_files = [
-    "README.markdown"
-  ]
   s.files = [
-    "README.markdown",
+    "Gemfile",
+     "Gemfile.lock",
      "Rakefile",
+     "Readme.md",
      "VERSION",
      "init.rb",
      "lib/solr_collection.rb",
@@ -27,11 +26,11 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/grosser/solr_collection}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{Wrapper for solr results sets then behaves/feels like will_paginate collection}
   s.test_files = [
-    "spec/spec_helper.rb",
-     "spec/solr_collection_spec.rb"
+    "spec/solr_collection_spec.rb",
+     "spec/spec_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
