@@ -3,7 +3,7 @@ require 'will_paginate/collection'
 #Proxy that delegates all calls to contained subject
 # except solr related methods in MAPPED_FIELDS
 class SolrCollection
-  MAPPED_FIELDS = [:facets, :spellcheck, {:total=>:total_entries}]
+  MAPPED_FIELDS = [:facets, :spellcheck, :total_entries]
 
   def initialize(solr_result, options={})
     options = options.dup
@@ -17,21 +17,18 @@ class SolrCollection
 
     #get fields from solr_result or set them to nil
     @solr_data = {}
-    MAPPED_FIELDS.each do |fields|
-      if fields.is_a? Hash
-        solr_field = fields.keys.first
-        collection_field = fields.values.first
-      else
-        solr_field = collection_field = fields
-      end
-
-      @solr_data[collection_field] = if solr_result.respond_to?(solr_field)
-        solr_result.send(solr_field)
+    MAPPED_FIELDS.each do |field|
+      @solr_data[field] = if options[field]
+        options[field]
+      elsif solr_result.respond_to?(field)
+        solr_result.send(field)
       else
         nil
       end
     end
-    @solr_data[:total_entries] ||= options[:total_entries] || results.size
+
+    # always set a total
+    @solr_data[:total_entries] ||= (results.respond_to?(:total) ? results.total : results.size)
 
     #build will_paginate collection from given options
     options = fill_page_and_per_page(options)
@@ -41,7 +38,7 @@ class SolrCollection
       options[:per_page],
       @solr_data[:total_entries]
     )
-    @subject.replace(results)
+    @subject.replace(results.to_ary)
   end
 
   def has_facet_fields?

@@ -1,10 +1,15 @@
 require 'spec/spec_helper'
 
 describe SolrCollection do
-  it "behaves like an array" do
-    s = SolrCollection.new([1,2,3])
-    s.size.should == 3
-    s[1].should == 2
+  it "behaves like an array when built from solr result" do
+    a = []
+    def a.results; [1, 2, 3];end
+    SolrCollection.new(a)[2].should == 3
+  end
+
+  it "behaves like an array when built from array" do
+    a = [1, 2, 3]
+    SolrCollection.new(a)[2].should == 3
   end
 
   it "behaves like a will_paginate collection" do
@@ -19,20 +24,20 @@ describe SolrCollection do
   end
 
   describe "pages" do
-    it "does not know page" do
-      lambda{ SolrCollection.new([1,2,3]).page }.should raise_error
+    it "does not know non-will-paginate methods" do
+      lambda{ SolrCollection.new([1,2,3], :page => 3).page }.should raise_error
+    end
+
+    it "can set page" do
+      SolrCollection.new([1,2,3], :page=>3).current_page.should == 3
     end
 
     it "knows current_page" do
       SolrCollection.new([1,2,3]).current_page.should == 1
     end
 
-    it "knows per_page" do
+    it "knows default per_page" do
       SolrCollection.new([1,2,3]).per_page.should == 10
-    end
-
-     it "can set page" do
-      SolrCollection.new([1,2,3], :page=>3).current_page.should == 3
     end
 
     it "can set per_page" do
@@ -54,44 +59,57 @@ describe SolrCollection do
     end
   end
 
-  describe "solr fields" do
+  describe "facets" do
     it "knows factes" do
       SolrCollection.new([]).facets.should == nil
     end
 
-    it "knows spellcheck" do
-      SolrCollection.new([]).spellcheck.should == nil
+    it "can set facets via options" do
+      SolrCollection.new([], :facets => [1]).facets.should == [1]
     end
 
-    it "does not know non-solr-method" do
-      lambda{ SolrCollection.new([]).fooo }.should raise_error
-    end
-
-    it "uses results as subject" do
+    it "can set facets via collection" do
       a = []
-      def a.results; [1,2,3];end
-      SolrCollection.new(a)[2].should == 3
+      def a.facets; [1]; end
+      SolrCollection.new(a).facets.should == [1]
     end
 
-    it "knows total_entries" do
-      SolrCollection.new([1,2,3]).total_entries.should == 3
+    it "prefers facets from options" do
+      a = []
+      def a.facets; [1]; end
+      SolrCollection.new([], :facets => [2]).facets.should == [2]
     end
+  end
 
-    it "can get total_entries from an array" do
-      a = [1,2,3]
-      SolrCollection.new(a, :per_page=>2).total_pages.should == 2
-    end
+  it "knows spellcheck" do
+    SolrCollection.new([]).spellcheck.should == nil
+  end
 
-    it "can get total_entries from a solr resultset" do
+  it "does not know non-solr-method" do
+    lambda{ SolrCollection.new([]).fooo }.should raise_error
+  end
+
+  describe "total_entries" do
+    it "can get total_entries from a solr result" do
       a = []
       def a.total; 22;end
       SolrCollection.new(a).total_entries.should == 22
     end
 
-    it "does not overwrite total from solr resultset with given total_entries" do
+    it "can get total_entries from array" do
+      a = [1,2,3]
+      SolrCollection.new(a).total_entries.should == 3
+    end
+
+    it "can get total_entries from self" do
+      a = SolrCollection.new([1,2,3])
+      SolrCollection.new(a).total_entries.should == 3
+    end
+
+    it "prefers total_entries from options" do
       a = []
       def a.total; 22;end
-      SolrCollection.new(a, :total_entries=>33).total_entries.should == 22
+      SolrCollection.new(a, :total_entries=>33).total_entries.should == 33
     end
   end
 
