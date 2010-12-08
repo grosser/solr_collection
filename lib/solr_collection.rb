@@ -49,6 +49,12 @@ class SolrCollection
     !!(facets and facets['facet_fields'] and not facets['facet_fields'].empty?)
   end
 
+  def facet_field(field)
+    if has_facet_fields? and value = facets['facet_fields'][field]
+      value.empty? ? nil : value
+    end
+  end
+
   private
 
   def fill_page_and_per_page(options)

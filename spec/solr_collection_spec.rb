@@ -112,4 +112,22 @@ describe SolrCollection do
       SolrCollection.new(a).has_facet_fields?.should == true
     end
   end
+
+  describe :facet_field do
+    it "gets info from facet_fields" do
+      SolrCollection.new([], :facets => {'facet_fields' => {'x' => {'xx' => 1}}}).facet_field('x').should == {'xx' => 1}
+    end
+
+    it "returns nil when field is empty" do
+      SolrCollection.new([], :facets => {'facet_fields' => {'x' => []}}).facet_field('x').should == nil
+    end
+
+    it "returns nil when field is not found" do
+      SolrCollection.new([], :facets => {'facet_fields' => []}).facet_field('x').should == nil
+    end
+
+    it "returns nil when facets are empty" do
+      SolrCollection.new([]).facet_field('x').should == nil
+    end
+  end
 end
