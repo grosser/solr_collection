@@ -148,4 +148,22 @@ describe SolrCollection do
       SolrCollection.new([]).facet_field('x').should == nil
     end
   end
+
+  describe :respond_to do
+    it "responds to own methods" do
+      SolrCollection.new([]).respond_to?(:has_facet_fields?).should == true
+    end
+
+    it "responds to subjects methods" do
+      SolrCollection.new([]).respond_to?(:total_pages).should == true
+    end
+
+    it "responds to missing methods" do
+      SolrCollection.new([]).respond_to?(:spellcheck).should == true
+    end
+
+    it "does not respond to unknown methods" do
+      SolrCollection.new([]).respond_to?(:foo).should == false
+    end
+  end
 end

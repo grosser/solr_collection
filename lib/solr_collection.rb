@@ -52,6 +52,10 @@ class SolrCollection
     end
   end
 
+  def respond_to?(method)
+    @solr_data.key?(method) or @subject.respond_to?(method) or super
+  end
+
   private
 
   def fill_page_and_per_page(options)
