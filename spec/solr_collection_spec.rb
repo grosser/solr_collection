@@ -54,6 +54,7 @@ describe SolrCollection do
       solr.per_page.should == per_page
       solr.current_page.should.should == page
       solr.total_pages.should.should == 3
+      solr.total_entries.should.should == total_entries
     end
   end
 
