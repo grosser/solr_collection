@@ -3,41 +3,38 @@ require 'will_paginate/collection'
 #Proxy that delegates all calls to contained subject
 # except solr related methods in MAPPED_FIELDS
 class SolrCollection
-  MAPPED_FIELDS = [:facets, :spellcheck, :total_entries]
+  SOLR_FIELDS = [:facets, :spellcheck]
 
-  def initialize(solr_result, options={})
+  def initialize(collection, options={})
     options = options.dup
 
-    #solr result has results in an array called results
-    results = if solr_result.respond_to?(:results)
-      solr_result.results
-    else
-      solr_result
-    end
-
-    #get fields from solr_result or set them to nil
+    # get fields from solr result-set or set them to nil
     @solr_data = {}
-    MAPPED_FIELDS.each do |field|
+    SOLR_FIELDS.each do |field|
       @solr_data[field] = if options[field]
         options[field]
-      elsif solr_result.respond_to?(field)
-        solr_result.send(field)
+      elsif collection.respond_to?(field)
+        collection.send(field)
       else
         nil
       end
     end
 
-    # always set a total
-    @solr_data[:total_entries] ||= (results.respond_to?(:total) ? results.total : results.size)
-
-    #build will_paginate collection from given options
+    # copy or generate pagination information
+    options[:page] ||= (collection.respond_to?(:current_page) ? collection.current_page : nil)
+    options[:per_page] ||= (collection.respond_to?(:per_page) ? collection.per_page : nil)
+    options[:total_entries] ||= (collection.respond_to?(:total) ? collection.total : collection.size)
     options = fill_page_and_per_page(options)
 
+    # build paginate-able object
     @subject = WillPaginate::Collection.new(
       options[:page],
       options[:per_page],
-      @solr_data[:total_entries]
+      options[:total_entries]
     )
+
+    # solr result-set has results in an array called results
+    results = (collection.respond_to?(:results) ? collection.results : collection)
     @subject.replace(results.to_ary)
   end
 
@@ -73,7 +70,7 @@ class SolrCollection
   def method_missing(method, *args, &block)
     method = method.to_sym
     if @solr_data.key? method
-      @solr_data[method]
+      @solr_data[method] or (@subject.send(method, *args, &block) rescue nil)
     else
       @subject.send(method, *args, &block)
     end

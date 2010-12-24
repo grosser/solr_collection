@@ -36,12 +36,24 @@ describe SolrCollection do
       SolrCollection.new([1,2,3]).current_page.should == 1
     end
 
-    it "knows default per_page" do
+    it "has a default for per_page" do
       SolrCollection.new([1,2,3]).per_page.should == 10
     end
 
     it "can set per_page" do
       SolrCollection.new([1,2,3], :per_page=>3).per_page.should == 3
+    end
+
+    it "copies pagination information" do
+      page = 2
+      per_page = 3
+      total_entries = 7
+      collection = WillPaginate::Collection.new(page, per_page, total_entries)
+      collection = collection.replace([1,2,3,4,5,6,7])
+      solr = SolrCollection.new(collection)
+      solr.per_page.should == per_page
+      solr.current_page.should.should == page
+      solr.total_pages.should.should == 3
     end
   end
 
