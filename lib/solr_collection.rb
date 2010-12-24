@@ -23,7 +23,13 @@ class SolrCollection
     # copy or generate pagination information
     options[:page] ||= (collection.respond_to?(:current_page) ? collection.current_page : nil)
     options[:per_page] ||= (collection.respond_to?(:per_page) ? collection.per_page : nil)
-    options[:total_entries] ||= (collection.respond_to?(:total) ? collection.total : collection.size)
+    options[:total_entries] ||= if collection.respond_to?(:total)
+      collection.total
+    elsif collection.respond_to?(:total_entries)
+      collection.total_entries
+    else
+      collection.size
+    end
     options = fill_page_and_per_page(options)
 
     # build paginate-able object

@@ -49,7 +49,7 @@ describe SolrCollection do
       per_page = 3
       total_entries = 7
       collection = WillPaginate::Collection.new(page, per_page, total_entries)
-      collection = collection.replace([1,2,3,4,5,6,7])
+      collection = collection.replace([1,2,3,4])
       solr = SolrCollection.new(collection)
       solr.per_page.should == per_page
       solr.current_page.should.should == page
