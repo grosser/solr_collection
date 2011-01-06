@@ -1,6 +1,9 @@
 source :rubygems
 
-gem 'rake'
-gem 'rspec', '~>2'
-gem 'jeweler'
 gem 'will_paginate'
+
+group :dev do
+  gem 'rake'
+  gem 'rspec', '~>2'
+  gem 'jeweler'
+end
