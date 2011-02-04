@@ -22,6 +22,10 @@ describe SolrCollection do
     SolrCollection.new([1], a).current_page.should == 2
     a.should == {:per_page=>2, :offset=>2}
   end
+  
+  it "returns the subject on to_a" do
+    SolrCollection.new([1,2,3]).to_a.should == [1,2,3]
+  end
 
   describe "pages" do
     it "does not know non-will-paginate methods" do

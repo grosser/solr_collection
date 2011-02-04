@@ -58,6 +58,10 @@ class SolrCollection
   def respond_to?(method)
     @solr_data.key?(method) or @subject.respond_to?(method) or super
   end
+  
+  def to_a
+    @subject.to_a
+  end
 
   private
 
